@@ -35,7 +35,7 @@ class UserModel {
     token: json["token"],
     name: json["name"],
     email: json["email"],
-    aadhar: json["aadhar"],
+    aadhar: json["aadhar_id"],
     voterId: json["voter_id"],
     isAdmin: json["isAdmin"],
     hasVoted: json["hasVoted"],

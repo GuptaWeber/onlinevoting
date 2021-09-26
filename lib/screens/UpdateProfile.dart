@@ -19,15 +19,15 @@ class UpdateProfile extends StatefulWidget {
 
 class _UpdateProfileState extends State<UpdateProfile> {
   final formKey = GlobalKey<FormState>();
-  String candidateName;
-  String party;
+  String userName;
+  String voterId;
   String position;
-  List<String> partys = ["ABC", "BJP", "CONGRESS", "YSR CP", "TDP"];
   bool hasError;
 
   Future<UserModel> _getProfileDetails() async {
     print(widget.payload['user']['id'].toString());
-    final url = Uri.parse('$SERVER_IP/users/profile/' + widget.payload['user']['id'].toString());
+    final url = Uri.parse(
+        '$SERVER_IP/users/profile/' + widget.payload['user']['id'].toString());
     print(url);
     final headers = {"Content-type": "application/json"};
 
@@ -54,61 +54,72 @@ class _UpdateProfileState extends State<UpdateProfile> {
             ),
             FutureBuilder(
               future: _getProfileDetails(),
-              builder: (BuildContext context, AsyncSnapshot snapshot){
-                if(snapshot.hasData){
-                  print(snapshot);
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  String tempName = snapshot.data.name;
+                  String tempEmail = snapshot.data.email;
+                  String aadharNumber = snapshot.data.aadhar;
+                  String tempVoterId = snapshot.data.voterId;
+                  print(snapshot.data.aadhar);
                   return Expanded(
                     child: Container(
-
-                    ),
+                        child: Padding(
+                      padding: EdgeInsets.all(24.0),
+                      child: Column(
+                        children: [
+                          Form(
+                              key: formKey,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    userNameField(tempName),
+                                    SizedBox(
+                                      height: 15.0,
+                                    ),
+                                    emailField(tempEmail),
+                                    SizedBox(
+                                      height: 15.0,
+                                    ),
+                                    aadharField(aadharNumber),
+                                    SizedBox(
+                                      height: 15.0,
+                                    ),
+                                    voterField(tempVoterId),
+                                    SizedBox(
+                                      height: 15.0,
+                                    ),
+                                    submitButton(),
+                                  ],
+                                ),
+                              ))
+                        ],
+                      ),
+                    )),
                   );
-                }else{
+                } else {
                   return Container(
                     child: Text("Loading...."),
                   );
                 }
               },
             ),
-
-            // Padding(
-            //   padding: EdgeInsets.all(24.0),
-            //   child: Column(
-            //     children: [
-            //       Form(
-            //           key: formKey,
-            //           child: SingleChildScrollView(
-            //             child: Column(
-            //               mainAxisSize: MainAxisSize.min,
-            //               children: [
-            //                 candidateNameField(),
-            //                 SizedBox(
-            //                   height: 15.0,
-            //                 ),
-            //                 partyDropDown(),
-            //                 SizedBox(
-            //                   height: 15.0,
-            //                 ),
-            //                 submitButton(),
-            //               ],
-            //             ),
-            //           ))
-            //     ],
-            //   ),
-            // )
           ],
         ),
       ),
     );
   }
 
-  Widget candidateNameField() {
+  Widget userNameField(String tempName) {
+    print(tempName);
     return TextFormField(
-      decoration: InputDecoration(
-          labelText: 'Candidate Name', border: OutlineInputBorder()),
-      onSaved: (value) => setState(() => candidateName = value.trim()),
+      initialValue: tempName,
+      decoration:
+          InputDecoration(labelText: 'User Name', border: OutlineInputBorder()),
+      onSaved: (value) => setState(() => userName = value.trim()),
       validator: (value) {
         if (value.length == 0) {
-          return "Candidate Name must not be empty!";
+          return "Username must not be empty!";
         } else {
           return null;
         }
@@ -116,95 +127,80 @@ class _UpdateProfileState extends State<UpdateProfile> {
     );
   }
 
-  Widget partyDropDown() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          "Party : ",
-          style: TextStyle(fontSize: 20),
-        ),
-        DropdownButton<String>(
-          value: party,
-          icon: const Icon(Icons.arrow_downward),
-          iconSize: 24,
-          elevation: 16,
-          style: const TextStyle(color: Colors.deepPurple),
-          underline: Container(
-            height: 2,
-            color: Colors.deepPurpleAccent,
-          ),
-          onChanged: (newValue) {
-            setState(() {
-              party = newValue;
-            });
-          },
-          items: partys.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        )
-      ],
+  Widget emailField(String tempEmail) {
+    return TextFormField(
+      initialValue: tempEmail,
+      readOnly: true,
+      decoration: InputDecoration(
+          labelText: 'Email', border: OutlineInputBorder()),
     );
   }
 
+  Widget aadharField(String tempAadhar) {
+    return TextFormField(
+      initialValue: tempAadhar,
+      readOnly: true,
+      decoration: InputDecoration(
+          labelText: 'Aadhar Number', border: OutlineInputBorder()),
+    );
+  }
+
+  Widget voterField(String tempVoter) {
+    return TextFormField(
+      initialValue: tempVoter,
+      readOnly: true,
+      decoration: InputDecoration(
+          labelText: 'Voter Id', border: OutlineInputBorder()),
+    );
+  }
 
   Widget submitButton() {
     return MaterialButton(
       minWidth: MediaQuery.of(context).size.width,
       height: 45,
       color: Colors.blue[600],
-      child: new Text('Add',
+      child: new Text('Update Profile',
           style: new TextStyle(fontSize: 16.0, color: Colors.white)),
       onPressed: () async {
         final isValid = formKey.currentState.validate();
 
         if (isValid) {
           formKey.currentState.save();
-          StatusModel status = await addCandidateAPI(candidateName.trim(),
-              party.trim(), position.trim().toUpperCase());
+          StatusModel status = await UpdateProfileAPI(userName.trim());
           if (status.error != null) {
             displayDialog(context, "Error", status.error);
           } else {
             displayDialog(context, "Success", status.success);
             print(status.success);
-            Route route = MaterialPageRoute(
-                builder: (c) => ManageCandidates(widget.jwt, widget.payload));
 
-            Navigator.push(context, route);
           }
         }
       },
     );
   }
 
-  Future<StatusModel> addCandidateAPI(
-      String nameText, String partyText, String positionText) async {
-    String jaiJWT =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJuYW1lIjoiV2ViZXIiLCJwYXNzd29yZCI6InRlc3QiLCJlbWFpbCI6IndlYmVyQHdlYmVyLmNvbSIsImFhZGhhcl9pZCI6Ijk1NDUqKioqKioqIiwidm90ZXJfaWQiOiJUMTIzKioqIiwiaXNfYWRtaW4iOnRydWUsImhhc192b3RlZCI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjEtMDktMDRUMTc6NTY6MDUuNDg5WiIsInVwZGF0ZWRBdCI6IjIwMjEtMDktMDRUMTc6NTY6MDUuNDg5WiJ9LCJpYXQiOjE2MzEwODE2MDB9.XmJgyHm4tIUGm53N8ElmnvlOcOY-Xk7tcgT8RaGHUKg";
+  Future<StatusModel> UpdateProfileAPI(
+      String nameText) async {
 
-    final url = Uri.parse('$SERVER_IP/candidate/addcandidate');
-    final headers = {"Content-type": "application/json", "accessToken": jaiJWT};
-    final jsonBody =
-        '{ "candidateName" : "$nameText", "position" : "$positionText", "party" : "$partyText"}';
+    final url = Uri.parse('$SERVER_IP/users/profile/'+widget.payload['user']['id'].toString());
+    final headers = {"Content-type": "application/json"};
+    final jsonBody = '{ "user" : "$nameText"}';
 
     var res = await http.post(url, headers: headers, body: jsonBody);
 
-    if (res.statusCode == 201) {
-      setState(() {
-        hasError = false;
-      });
-      return statusModelFromJson(res.body);
-    } else if (res.statusCode == 412) {
-      setState(() {
-        hasError = true;
-      });
-      print(res.body);
-      return statusModelFromJson(res.body);
-    }
-
+    // if (res.statusCode == 201) {
+    //   setState(() {
+    //     hasError = false;
+    //   });
+    //   return statusModelFromJson(res.body);
+    // } else if (res.statusCode == 412) {
+    //   setState(() {
+    //     hasError = true;
+    //   });
+    //   print(res.body);
+    //   return statusModelFromJson(res.body);
+    // }
+    print(res.body);
     return null;
   }
 

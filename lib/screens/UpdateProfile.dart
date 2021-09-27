@@ -5,7 +5,6 @@ import 'package:polling/main.dart';
 import 'dart:async';
 import 'package:polling/models/StatusModel.dart';
 import 'package:polling/models/UserModel.dart';
-import 'package:polling/screens/ManageCandidates.dart';
 
 class UpdateProfile extends StatefulWidget {
   UpdateProfile(this.jwt, this.payload);
@@ -62,39 +61,35 @@ class _UpdateProfileState extends State<UpdateProfile> {
                   String tempVoterId = snapshot.data.voterId;
                   print(snapshot.data.aadhar);
                   return Expanded(
-                    child: Container(
+                    child: SingleChildScrollView(
                         child: Padding(
                       padding: EdgeInsets.all(24.0),
-                      child: Column(
-                        children: [
+                      child:
                           Form(
                               key: formKey,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    userNameField(tempName),
-                                    SizedBox(
-                                      height: 15.0,
-                                    ),
-                                    emailField(tempEmail),
-                                    SizedBox(
-                                      height: 15.0,
-                                    ),
-                                    aadharField(aadharNumber),
-                                    SizedBox(
-                                      height: 15.0,
-                                    ),
-                                    voterField(tempVoterId),
-                                    SizedBox(
-                                      height: 15.0,
-                                    ),
-                                    submitButton(),
-                                  ],
-                                ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  userNameField(tempName),
+                                  SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  emailField(tempEmail),
+                                  SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  aadharField(aadharNumber),
+                                  SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  voterField(tempVoterId),
+                                  SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  submitButton(),
+                                ],
                               ))
-                        ],
-                      ),
+
                     )),
                   );
                 } else {
@@ -166,8 +161,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
         if (isValid) {
           formKey.currentState.save();
+          print(userName);
+
           StatusModel status = await UpdateProfileAPI(userName.trim());
-          if (status.error != null) {
+          if (hasError) {
             displayDialog(context, "Error", status.error);
           } else {
             displayDialog(context, "Success", status.success);
@@ -184,22 +181,22 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
     final url = Uri.parse('$SERVER_IP/users/profile/'+widget.payload['user']['id'].toString());
     final headers = {"Content-type": "application/json"};
-    final jsonBody = '{ "user" : "$nameText"}';
+    final jsonBody = '{ "name" : "$nameText"}';
 
     var res = await http.post(url, headers: headers, body: jsonBody);
 
-    // if (res.statusCode == 201) {
-    //   setState(() {
-    //     hasError = false;
-    //   });
-    //   return statusModelFromJson(res.body);
-    // } else if (res.statusCode == 412) {
-    //   setState(() {
-    //     hasError = true;
-    //   });
-    //   print(res.body);
-    //   return statusModelFromJson(res.body);
-    // }
+    if (res.statusCode == 200) {
+      setState(() {
+        hasError = false;
+      });
+      return statusModelFromJson(res.body);
+    } else if (res.statusCode == 412) {
+      setState(() {
+        hasError = true;
+      });
+      print(res.body);
+      return statusModelFromJson(res.body);
+    }
     print(res.body);
     return null;
   }

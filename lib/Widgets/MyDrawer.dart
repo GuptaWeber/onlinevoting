@@ -6,6 +6,7 @@ import 'package:polling/login.dart';
 import 'package:polling/main.dart';
 import 'package:polling/screens/CurrentPolls.dart';
 import 'package:polling/screens/ManageCandidates.dart';
+import 'package:polling/screens/UpdatePassword.dart';
 import 'package:polling/screens/UpdateProfile.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -53,6 +54,8 @@ class _MyDrawerState extends State<MyDrawer> {
           widget.payload['user']['is_admin'] == false? currentPolls() : Container(),
           widget.payload['user']['is_admin'] == false? Divider() : Container(),
           updateProfile(),
+          Divider(),
+          updatePassword(),
           Divider(),
           logoutScreen(),
           Divider(),
@@ -285,6 +288,43 @@ class _MyDrawerState extends State<MyDrawer> {
                 flex: 3,
                 child: Text(
                   "Profile",
+                  style: TextStyle(color: Colors.black, fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget updatePassword() {
+    return Material(
+      child: InkWell(
+        onTap: () {
+
+          Route route = MaterialPageRoute(builder: (c) => UpdatePassword(widget.jwt, widget.payload));
+
+          Navigator.push(
+              context,
+              route
+          );
+
+        },
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Row(
+            children: [
+              Expanded(
+                  child: Icon(
+                    Icons.person,
+                    size: 20,
+                    color: Colors.black,
+                  )),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  "Update Password",
                   style: TextStyle(color: Colors.black, fontSize: 16),
                 ),
               ),

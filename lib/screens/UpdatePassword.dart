@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:polling/main.dart';
 import 'dart:async';
 import 'package:polling/models/StatusModel.dart';
-import 'package:polling/models/UserModel.dart';
 
 class UpdatePassword extends StatefulWidget {
   UpdatePassword(this.jwt, this.payload);
@@ -136,14 +135,18 @@ class _UpdatePasswordState extends State<UpdatePassword> {
           formKey.currentState.save();
           print(currentPasswordString);
 
-          StatusModel status = await UpdatePasswordAPI(currentPasswordString, confirmPass);
-          if (hasError) {
-            displayDialog(context, "Error", status.error);
-          } else {
-            displayDialog(context, "Success", status.success);
-            print(status.success);
-
+          if(newPass != confirmPass){
+            displayDialog(context, "Error", "New Password & Confirm Password didn't match");
+          }else{
+            StatusModel status = await UpdatePasswordAPI(currentPasswordString, confirmPass);
+            if (hasError) {
+              displayDialog(context, "Error", status.error);
+            } else {
+              displayDialog(context, "Success", status.success);
+              print(status.success);
+            }
           }
+
         }
       },
     );
@@ -164,7 +167,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
         hasError = false;
       });
       return statusModelFromJson(res.body);
-    } else if (res.statusCode == 412) {
+    } else if (res.statusCode == 401) {
       setState(() {
         hasError = true;
       });

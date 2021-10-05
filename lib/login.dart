@@ -94,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               filled: true,
                               fillColor: Color(0xFFe7edeb),
-                              hintText: "E-mail",
+                              hintText: "Voter Id",
                               prefixIcon: Icon(Icons.email, color: Colors.grey[600],)
                             ),
                           ),

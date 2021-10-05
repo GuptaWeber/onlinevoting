@@ -69,10 +69,18 @@ class _CurrentPollsState extends State<CurrentPolls> {
                               print(snapshot.data[index]);
                              List <Candidate> candidates = await _getCandidatesByPositions(snapshot.data[index].position);
 
-                              Route route = MaterialPageRoute(
-                                  builder: (c) => PollingCandidates(widget.jwt, widget.payload, candidates));
+                             bool positionVoteStatus = await _getPositionVoteStatus(snapshot.data[index].position);
 
-                              Navigator.push(context, route);
+                             if(positionVoteStatus){
+
+                               displayDialog(context, "Error", "You Have Already Voted for the ${snapshot.data[index].position} Position");
+
+                             }else{
+                               Route route = MaterialPageRoute(
+                                   builder: (c) => PollingCandidates(widget.jwt, widget.payload, candidates));
+
+                               Navigator.push(context, route);
+                             }
 
                             },
                           );
@@ -104,6 +112,25 @@ class _CurrentPollsState extends State<CurrentPolls> {
 
     return candidates;
   }
+
+  Future<bool> _getPositionVoteStatus(String position) async {
+    final url = Uri.parse('$SERVER_IP/votes/votestatusforposition/'+ widget.payload['user']['id'].toString() + '/$position');
+    final headers = {"Content-type": "application/json"};
+
+    var res = await http.get(url, headers: headers);
+
+    var jsonData = json.decode(res.body);
+
+    return jsonData;
+
+  }
+
+  void displayDialog(BuildContext context, String title, String text) =>
+      showDialog(
+        context: context,
+        builder: (context) =>
+            AlertDialog(title: Text(title), content: Text(text)),
+      );
 
 }
 

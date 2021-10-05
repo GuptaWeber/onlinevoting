@@ -4,13 +4,12 @@
 
 import 'dart:convert';
 
-UserModel userModelFromJson(String str) => UserModel.fromJson(json.decode(str));
+UserModelId userModelFromJson(String str) => UserModelId.fromJson(json.decode(str));
 
-String userModelToJson(UserModel data) => json.encode(data.toJson());
+String userModelToJson(UserModelId data) => json.encode(data.toJson());
 
-class UserModel {
-  UserModel({
-    this.id,
+class UserModelId {
+  UserModelId({
     this.token,
     this.name,
     this.email,
@@ -22,7 +21,6 @@ class UserModel {
     this.success,
   });
 
-  int id;
   String token;
   String name;
   String email;
@@ -33,8 +31,7 @@ class UserModel {
   String error;
   String success;
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-    id: json["id"],
+  factory UserModelId.fromJson(Map<String, dynamic> json) => UserModelId(
     token: json["token"],
     name: json["name"],
     email: json["email"],
@@ -47,7 +44,6 @@ class UserModel {
   );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
     "token": token,
     "name": name,
     "email": email,

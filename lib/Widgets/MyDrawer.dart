@@ -4,10 +4,15 @@ import 'package:polling/ManagePositions.dart';
 import 'package:polling/Widgets/my_header_drawer.dart';
 import 'package:polling/login.dart';
 import 'package:polling/main.dart';
+import 'package:polling/models/UserModel.dart';
 import 'package:polling/screens/CurrentPolls.dart';
+import 'package:polling/screens/ManageAdmins.dart';
 import 'package:polling/screens/ManageCandidates.dart';
 import 'package:polling/screens/UpdatePassword.dart';
 import 'package:polling/screens/UpdateProfile.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
 
 class MyDrawer extends StatefulWidget {
   MyDrawer(this.jwt, this.payload);
@@ -102,7 +107,16 @@ class _MyDrawerState extends State<MyDrawer> {
   Widget manageAdmins() {
     return Material(
       child: InkWell(
-        onTap: () {},
+        onTap: () async {
+
+          List<UserModel> users = await _getUsers();
+
+          Route route = MaterialPageRoute(builder: (c) => ManageAdmins(widget.jwt, widget.payload, users));
+          Navigator.push(
+              context,
+              route
+          );
+        },
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Row(
@@ -380,6 +394,24 @@ class _MyDrawerState extends State<MyDrawer> {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  Future<List<UserModel>> _getUsers() async {
+    final url = Uri.parse('$SERVER_IP/users/getusers');
+    final headers = {"Content-type": "application/json"};
+
+    var res = await http.get(url, headers: headers);
+
+    var jsonData = json.decode(res.body);
+
+    List<UserModel> users = [];
+
+    for (var u in jsonData) {
+      UserModel user = UserModel.fromJson(u);
+      users.add(user);
+    }
+
+    return users;
   }
 
 }

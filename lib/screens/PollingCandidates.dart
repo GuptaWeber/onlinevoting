@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:polling/models/StatusModel.dart';
+import 'package:polling/screens/CurrentPolls.dart';
 
 
 class PollingCandidates extends StatefulWidget {
@@ -22,7 +23,7 @@ class PollingCandidates extends StatefulWidget {
 
 class _PollingCandidatesState extends State<PollingCandidates> {
 
-  int toVote = 1;
+  int toVote = 100;
   String sCandidateName;
   String sPosition;
   String sParty;
@@ -62,12 +63,6 @@ class _PollingCandidatesState extends State<PollingCandidates> {
                             sId = candidate.id;
                           });
 
-
-
-                          print(widget.payload["user"]["name"]);
-                          print(widget.payload["user"]["id"]);
-
-                          print("Radio $toVote " + candidate.candidateName);
                         },
                       ),
                     );
@@ -88,8 +83,13 @@ class _PollingCandidatesState extends State<PollingCandidates> {
                   if(hasError){
                     displayDialog(context, "Error", voteStatus.error);
                   }else{
-                    displayDialog(context, "Success", voteStatus.success);
-                    print(voteStatus.success);
+
+                    Timer(Duration(seconds: 2), ()=>displayDialog(context, "Success", "${voteStatus.success} for $sCandidateName") );
+
+                    Route route = MaterialPageRoute(
+                        builder: (c) => CurrentPolls(widget.jwt, widget.payload));
+
+                    Navigator.push(context, route);
                   }
 
                 },

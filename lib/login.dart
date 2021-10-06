@@ -16,8 +16,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-
-
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -170,7 +168,6 @@ class _LoginPageState extends State<LoginPage> {
                                 style: new TextStyle(fontSize: 16.0, color: Colors.white)),
                             onPressed: () async {
 
-
                                 Route route = MaterialPageRoute(builder: (c) => SignupPage());
 
                                 Navigator.push(
@@ -203,9 +200,11 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<UserModel> attemptLogIn(String username, String password) async {
 
-    final url = Uri.parse('$SERVER_IP/users/login');
+    // final url = Uri.parse('$SERVER_IP/users/login');
+    final url = Uri.parse('$SERVER_IP/users/loginwithvoterid');
     final headers = {"Content-type": "application/json"};
-    final jsonBody = '{"email" : "$username", "password" : "$password" }';
+    // final jsonBody = '{"email" : "$username", "password" : "$password" }';
+    final jsonBody = '{"voter_id" : "$username", "password" : "$password" }';
 
     var res = await post(
         url,

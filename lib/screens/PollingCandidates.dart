@@ -40,7 +40,7 @@ class _PollingCandidatesState extends State<PollingCandidates> {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
+              child: widget.candidates.length != 0 ? ListView.builder(
 
                   itemCount: widget.candidates.length,
                   itemBuilder: (BuildContext context, int index) {
@@ -66,7 +66,12 @@ class _PollingCandidatesState extends State<PollingCandidates> {
                         },
                       ),
                     );
-                  }),
+                  }) : Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text(" No Candidates found for this Position!", style: TextStyle( fontSize: 20),),
+                ),
+              ),
             ),
             isSelected? Padding(
               padding: const EdgeInsets.all(15.0),
@@ -89,7 +94,7 @@ class _PollingCandidatesState extends State<PollingCandidates> {
                     Route route = MaterialPageRoute(
                         builder: (c) => CurrentPolls(widget.jwt, widget.payload));
 
-                    Navigator.push(context, route);
+                    Navigator.pushReplacement(context, route);
                   }
 
                 },

@@ -5,6 +5,7 @@ import 'package:polling/Widgets/my_header_drawer.dart';
 import 'package:polling/login.dart';
 import 'package:polling/main.dart';
 import 'package:polling/models/UserModel.dart';
+import 'package:polling/screens/CheckResults.dart';
 import 'package:polling/screens/CurrentPolls.dart';
 import 'package:polling/screens/ManageAdmins.dart';
 import 'package:polling/screens/ManageCandidates.dart';
@@ -215,7 +216,15 @@ class _MyDrawerState extends State<MyDrawer> {
   Widget checkResults() {
     return Material(
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+
+          Route route = MaterialPageRoute(builder: (c) => CheckResults(widget.jwt, widget.payload));
+
+          Navigator.push(
+              context,
+              route
+          );
+        },
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Row(

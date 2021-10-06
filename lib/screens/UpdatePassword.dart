@@ -34,7 +34,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
               height: 10,
             ),
             Text(
-              "Update Profile",
+              "Update Password",
               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
             ),
             Expanded(

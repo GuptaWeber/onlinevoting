@@ -22,7 +22,7 @@ class _AddCandidateState extends State<AddCandidate> {
   String candidateName;
   String party;
   String position;
-  List<String> partys = ["ABC", "BJP", "CONGRESS", "YSR CP", "TDP"];
+  List<String> partys = ["YSRCP", "BJP", "CONGRESS", "TDP", "JSP"];
   bool hasError;
 
   @override

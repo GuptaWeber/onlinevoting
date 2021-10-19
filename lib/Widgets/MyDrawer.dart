@@ -365,10 +365,9 @@ class _MyDrawerState extends State<MyDrawer> {
           _logout();
           Route route = MaterialPageRoute(builder: (c) => LoginPage());
 
-          Navigator.push(
-              context,
-              route
-          );
+          Navigator.pushAndRemoveUntil(
+              context, route, (route) => false);
+
         },
         child: Padding(
           padding: EdgeInsets.all(10),

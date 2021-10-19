@@ -48,6 +48,9 @@ class _PollingCandidatesState extends State<PollingCandidates> {
                     Candidate candidate = widget.candidates[index];
 
                     return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: AssetImage("assets/images/"+ candidate.party +".png"),
+                      ),
                       title: Text(candidate.candidateName),
                       trailing: Radio(
                         value: index.toInt(),
